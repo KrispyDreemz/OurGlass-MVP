@@ -1,0 +1,63 @@
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+model User {
+  id             Int       @id @default(autoincrement())
+  name           String
+  email          String    @unique
+  passwordHash   String
+  role           String    // 'artist', 'sponsor', 'collector', 'admin'
+  artworks       Artwork[]
+  bids           Bid[]
+  sponsorships   Sponsorship[]
+}
+
+model Artwork {
+  id           Int            @id @default(autoincrement())
+  artist       User           @relation(fields: [artistId], references: [id])
+  artistId     Int
+  title        String
+  description  String
+  imageUrl     String
+  status       String         // 'pending', 'active', 'sold'
+  auctions     Auction[]
+  sponsorships Sponsorship[]
+}
+
+model Auction {
+  id          Int       @id @default(autoincrement())
+  artwork     Artwork   @relation(fields: [artworkId], references: [id])
+  artworkId   Int
+  type        String    // 'sponsorship' or 'ownership'
+  startTime   DateTime
+  endTime     DateTime
+  reservePrice Float
+  bids        Bid[]
+}
+
+model Bid {
+  id         Int       @id @default(autoincrement())
+  auction    Auction   @relation(fields: [auctionId], references: [id])
+  auctionId  Int
+  user       User      @relation(fields: [userId], references: [id])
+  userId     Int
+  amount     Float
+  createdAt  DateTime  @default(now())
+}
+
+model Sponsorship {
+  id          Int       @id @default(autoincrement())
+  artwork     Artwork   @relation(fields: [artworkId], references: [id])
+  artworkId   Int
+  sponsor     User      @relation(fields: [sponsorId], references: [id])
+  sponsorId   Int
+  bidAmount   Float
+  won         Boolean
+  campaignUrl String?
+}
