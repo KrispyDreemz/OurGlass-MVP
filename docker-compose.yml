@@ -16,7 +16,9 @@ services:
     working_dir: /usr/src/app
     volumes:
       - ./backend:/usr/src/app
-    command: sh -c "npm install --silent && npm start"
+    command: sh -c "npm install --silent && npx prisma migrate deploy && npm start"
+    env_file:
+      - .env
     ports:
       - "4000:4000"
     depends_on:
