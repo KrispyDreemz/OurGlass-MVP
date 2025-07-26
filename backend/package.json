@@ -7,7 +7,8 @@
     "pretest": "if [ ! -f .env ]; then cp .env.example .env; fi",
     "db:setup": "./db-setup.sh",
     "test": "npm run db:setup && jest --runInBand",
-    "postinstall": "npm run db:setup"
+    "postinstall": "npm run db:setup",
+    "seed": "node prisma/seed.js"
   },
   "keywords": [],
   "author": "",

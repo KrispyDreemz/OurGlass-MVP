@@ -16,6 +16,7 @@ app.get('/health', (req, res) => {
 });
 
 app.use('/api', require('./routes/auth'));
+app.use('/api/artworks', require('./routes/artworks'));
 
 if (require.main === module) {
   app.listen(PORT, () => {
