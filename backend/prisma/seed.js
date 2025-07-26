@@ -35,6 +35,21 @@ async function main() {
       }
     });
   }
+
+  const finished = await prisma.sponsorshipAuction.findMany({ take: 2 });
+  for (let i = 0; i < finished.length; i++) {
+    await prisma.sponsorshipAuction.update({
+      where: { id: finished[i].id },
+      data: { status: 'winner_selected' }
+    });
+    await prisma.ownershipAuction.create({
+      data: {
+        artworkId: finished[i].artworkId,
+        endsAt: new Date(Date.now() + (i + 1) * 7200000),
+        status: 'active'
+      }
+    });
+  }
 }
 
 main().catch(e => { console.error(e); process.exit(1); }).finally(() => prisma.$disconnect());
