@@ -18,6 +18,8 @@ model User {
   role           String?
   artworks       Artwork[]
   galleryArtworks GalleryArtwork[]
+  ownershipAuctions OwnershipAuction[]
+  sales            Sale[]
   bids           Bid[]
   sponsorships   Sponsorship[]
   sponsorshipAuctions SponsorshipAuction[]
@@ -97,6 +99,7 @@ model GalleryArtwork {
   sponsorshipPhaseStart  DateTime? @map("sponsorship_phase_start")
   ownershipPhaseStart    DateTime? @map("ownership_phase_start")
   sponsorshipAuctions    SponsorshipAuction[]
+  ownershipAuctions      OwnershipAuction[]
 
   @@map("artworks")
 }
@@ -120,4 +123,39 @@ model SponsorshipAuction {
   @@map("sponsorship_auctions")
   @@index([artworkId])
   @@index([endsAt])
+}
+
+enum OwnershipAuctionStatus {
+  pending
+  active
+  ended
+}
+
+model OwnershipAuction {
+  id        String               @id @default(uuid())
+  artwork   GalleryArtwork       @relation(fields: [artworkId], references: [id], onDelete: Cascade)
+  artworkId Int                  @map("artwork_id")
+  currentBid Float?              @default(0) @map("current_bid")
+  bidder    User?                @relation(fields: [bidderId], references: [id])
+  bidderId  String?              @map("bidder_id")
+  endsAt    DateTime             @map("ends_at")
+  status    OwnershipAuctionStatus @default(pending)
+  sales     Sale[]
+
+  @@map("ownership_auctions")
+  @@index([artworkId])
+  @@index([endsAt])
+}
+
+model Sale {
+  id         String           @id @default(uuid())
+  auction    OwnershipAuction @relation(fields: [auctionId], references: [id], onDelete: Cascade)
+  auctionId  String           @map("auction_id")
+  buyer      User             @relation(fields: [buyerId], references: [id])
+  buyerId    String           @map("buyer_id")
+  finalPrice Float            @map("final_price")
+  createdAt  DateTime         @default(now()) @map("created_at")
+
+  @@map("sales")
+  @@index([auctionId])
 }
