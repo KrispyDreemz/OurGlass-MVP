@@ -4,9 +4,10 @@
   "main": "index.js",
   "scripts": {
     "start": "node server.js",
-    "pretest": "if [ ! -f .env ]; then cp .env.example .env; fi && docker compose up -d db api",
-    "test": "jest --runInBand",
-    "postinstall": "if [ -f .env ] || [ -f ../.env ]; then prisma generate && prisma migrate deploy; else echo 'Skipping migrations (no .env)'; fi"
+    "pretest": "if [ ! -f .env ]; then cp .env.example .env; fi",
+    "test": "npm run db:setup && jest --runInBand",
+    "db:setup": "DATABASE_URL=${DATABASE_URL:-file:./dev.db} prisma generate && prisma migrate deploy || echo 'Skipping DB migrations (Codex fallback)'",
+    "postinstall": "npm run db:setup"
   },
   "keywords": [],
   "author": "",
