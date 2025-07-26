@@ -5,7 +5,7 @@
   "scripts": {
     "start": "node server.js",
     "test": "jest",
-    "postinstall": "if [ -f .env ] || [ -f ../.env ]; then prisma generate && prisma migrate deploy; else echo 'Skipping migrations (no .env)'; fi"
+    "postinstall": "prisma migrate deploy"
   },
   "keywords": [],
   "author": "",
