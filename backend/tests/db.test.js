@@ -5,7 +5,7 @@ const prisma = new PrismaClient();
 beforeAll(async () => {
   try {
     await prisma.$connect();
-    await prisma.$executeRaw`SELECT 1`; // connection test
+    await prisma.$queryRaw`SELECT 1`; // connection test
   } catch (err) {
     console.error('Failed to connect to database:', err.message);
     throw err;

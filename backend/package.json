@@ -5,8 +5,8 @@
   "scripts": {
     "start": "node server.js",
     "pretest": "if [ ! -f .env ]; then cp .env.example .env; fi",
+    "db:setup": "./db-setup.sh",
     "test": "npm run db:setup && jest --runInBand",
-    "db:setup": "DATABASE_URL=${DATABASE_URL:-file:./dev.db} prisma generate && prisma migrate deploy || echo 'Skipping DB migrations (Codex fallback)'",
     "postinstall": "npm run db:setup"
   },
   "keywords": [],
