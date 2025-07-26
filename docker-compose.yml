@@ -18,7 +18,7 @@ services:
       - ./backend:/usr/src/app
     command: sh -c "npm install --silent && npx prisma migrate deploy && npm start"
     env_file:
-      - .env.example
+      - .env
     ports:
       - "4000:4000"
     depends_on:
