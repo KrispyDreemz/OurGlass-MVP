@@ -1,3 +1,40 @@
 # AGENTS.md – OurGlass Gallery MVP Agent Instructions
 
-Deploy and operate the OurGlass MVP backend (Node.js + Express + Prisma + PostgreSQL) in Codex containers and local Docker with no manual intervention. Always ensure a valid `DATABASE_URL`, confirm the Postgres (`db`) container is ready before Prisma commands, and apply or create migrations before starting the API. The platform supports the OurGlass business model: a decentralized, sponsorship-driven art marketplace with a two-phase auction system (Sponsorship Auction: sponsors fund marketing and earn a % of final sale; Ownership Auction: visibility-boosted bidding the following week) and 3.14% artist royalties on every resale. Revenue streams include 3.14% sponsorship fees, 6.28% auction commissions, and 3.14% resale royalties. Agents must handle startup and recovery as follows: load `.env` if present, else use `.env.example` so `DATABASE_URL` is always defined; start services with `docker compose up -d --build`; confirm Postgres readiness by running `docker compose exec db pg_isready -U ourglass`, retrying every 3 seconds up to 10 times; run Prisma migrations—if migrations exist, `docker compose exec api npx prisma migrate deploy`, else `docker compose exec api npx prisma migrate dev --name init_auction_system`; regenerate the Prisma client via `docker compose exec api npx prisma generate`; then start the API with `docker compose exec api npm start`. For recovery: if Prisma throws error P1012 (missing `DATABASE_URL`), ensure `.env` or `.env.example` exists; if database connection errors persist, wait 5 seconds and rerun `docker compose exec db pg_isready -U ourglass` and `docker compose exec api npx prisma migrate deploy`. Agents must keep the backend running reliably for automated tests, migrations, and auction flows (user onboarding, bidding, sponsorship payouts, resale royalties) to function without manual setup.
+Deploy and operate the OurGlass MVP backend (Node.js + Express + Prisma + PostgreSQL) in Codex containers and local Docker without manual intervention. On startup, if `.env` is missing, copy `.env.example` to `.env` so `DATABASE_URL` is guaranteed. Start Postgres (`db`) first, wait until it is accepting connections, initialize the schema if needed, apply migrations, generate Prisma Client, and start the API. The platform must support user onboarding, two-phase auctions (sponsorship and ownership), sponsorship payouts, and 3.14% artist royalties on every resale.
+
+Run the following process automatically at startup:
+```bash
+# Ensure environment exists
+if [ ! -f .env ]; then cp .env.example .env; fi
+
+# Start database first
+docker compose up -d --build db
+
+# Wait for Postgres readiness (retry every 3 seconds, max 10 attempts)
+for i in {1..10}; do
+  if docker compose exec db pg_isready -U ourglass; then break; fi
+  sleep 3
+done
+
+# Initialize schema if database is empty
+docker compose exec api npx prisma migrate dev --name init_auction_system || true
+
+# Apply existing migrations and regenerate Prisma Client
+docker compose exec api npx prisma migrate deploy
+docker compose exec api npx prisma generate
+
+# Start API container
+docker compose up -d --build api
+
+Recovery:
+
+    If Prisma throws P1012 (missing DATABASE_URL), ensure .env exists or copy it from .env.example.
+
+    If Postgres connection issues persist, restart db and rerun the migration and generation commands.
+
+    If migrations fail, run:
+
+    docker compose exec api npx prisma migrate dev --name init_auction_system
+    docker compose exec api npx prisma generate
+
+Codex agents must ensure this sequence runs so the backend starts cleanly with a ready database, all migrations applied, and API online for automated tests and marketplace features to run end-to-end.
