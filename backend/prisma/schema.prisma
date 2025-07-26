@@ -10,22 +10,21 @@ datasource db {
 }
 
 model User {
-  id             Int            @id @default(autoincrement())
-  name           String
+  id             String         @id @default(uuid())
   email          String         @unique
-  passwordHash   String
-  role           String         // 'artist', 'sponsor', 'collector', 'admin'
+  passwordHash   String         @map("password_hash")
+  createdAt      DateTime       @default(now()) @map("created_at")
+  name           String?
+  role           String?
   artworks       Artwork[]
   bids           Bid[]
   sponsorships   Sponsorship[]
-  createdAt      DateTime       @default(now())
-  updatedAt      DateTime       @updatedAt
 }
 
 model Artwork {
   id             Int             @id @default(autoincrement())
   artist         User            @relation(fields: [artistId], references: [id], onDelete: Cascade)
-  artistId       Int
+  artistId       String
   title          String
   description    String
   imageUrl       String
@@ -56,7 +55,7 @@ model Bid {
   auction        Auction         @relation(fields: [auctionId], references: [id], onDelete: Cascade)
   auctionId      Int
   user           User            @relation(fields: [userId], references: [id], onDelete: Cascade)
-  userId         Int
+  userId         String
   amount         Float
   createdAt      DateTime        @default(now())
 
@@ -68,7 +67,7 @@ model Sponsorship {
   artwork        Artwork         @relation(fields: [artworkId], references: [id], onDelete: Cascade)
   artworkId      Int
   sponsor        User            @relation(fields: [sponsorId], references: [id], onDelete: Cascade)
-  sponsorId      Int
+  sponsorId      String
   bidAmount      Float
   won            Boolean
   campaignUrl    String?
