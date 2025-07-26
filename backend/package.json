@@ -4,7 +4,8 @@
   "main": "index.js",
   "scripts": {
     "start": "node server.js",
-    "test": "jest",
+    "pretest": "if [ ! -f .env ]; then cp .env.example .env; fi && docker compose up -d db api",
+    "test": "jest --runInBand",
     "postinstall": "if [ -f .env ] || [ -f ../.env ]; then prisma generate && prisma migrate deploy; else echo 'Skipping migrations (no .env)'; fi"
   },
   "keywords": [],

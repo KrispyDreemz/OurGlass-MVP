@@ -1,4 +1,4 @@
-# AGENTS.md – OurGlass Gallery MVP Agent Instructions (Final Auto-Setup)
+# AGENTS.md – OurGlass Gallery MVP Agent Instructions
 
 Deploy and operate the OurGlass MVP backend (Node.js + Express + Prisma + PostgreSQL) in Codex containers and local Docker without manual intervention. Codex must guarantee a valid `DATABASE_URL`, ensure Postgres (`db`) is running before Prisma commands, initialize the schema if fresh, apply migrations, regenerate Prisma Client, and start the API.
 
