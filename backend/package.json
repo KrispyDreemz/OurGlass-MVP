@@ -4,7 +4,7 @@
   "main": "index.js",
   "scripts": {
     "start": "node server.js",
-    "pretest": "if [ ! -f .env ]; then cp .env.example .env; fi",
+    "pretest": "if [ \"$NODE_ENV\" = \"ci\" ]; then cp .env.example .env; elif [ ! -f .env ] || [ \"$NODE_ENV\" = \"codex\" ]; then cp .env.test.example .env; fi",
     "db:setup": "./db-setup.sh",
     "test": "npm run db:setup && jest --runInBand",
     "postinstall": "npm run db:setup",
