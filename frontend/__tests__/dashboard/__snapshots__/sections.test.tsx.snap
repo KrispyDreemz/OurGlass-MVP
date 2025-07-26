@@ -1,0 +1,74 @@
+// Jest Snapshot v1, https://jestjs.io/docs/snapshot-testing
+
+exports[`ArtworkCard snapshot 1`] = `
+<div>
+  <div
+    class="border p-4 rounded bg-gray-800 text-white"
+  >
+    <h3
+      class="font-semibold"
+    >
+      Test
+    </h3>
+    <p>
+      Status: 
+      pending
+    </p>
+  </div>
+</div>
+`;
+
+exports[`AuctionGrid snapshot 1`] = `
+<div>
+  <div>
+    <div
+      class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4"
+    >
+      <div
+        class="border rounded p-4 bg-gray-800 text-white"
+      >
+        <img
+          alt="Auction"
+          class="w-full h-40 object-cover mb-2"
+          src="/img"
+        />
+        <h3
+          class="font-semibold"
+        >
+          Auction
+        </h3>
+        <p>
+          Bid: $
+          10
+        </p>
+        <span>
+          0
+          h 
+          0
+          m 
+          0
+          s
+        </span>
+        <button
+          class="mt-2 px-2 py-1 bg-blue-600"
+        >
+          Bid Now
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
+`;
+
+exports[`CountdownTimer snapshot 1`] = `
+<div>
+  <span>
+    0
+    h 
+    0
+    m 
+    0
+    s
+  </span>
+</div>
+`;
