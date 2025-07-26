@@ -20,6 +20,7 @@ model User {
   galleryArtworks GalleryArtwork[]
   bids           Bid[]
   sponsorships   Sponsorship[]
+  sponsorshipAuctions SponsorshipAuction[]
 }
 
 model Artwork {
@@ -95,6 +96,28 @@ model GalleryArtwork {
   createdAt              DateTime @default(now()) @map("created_at")
   sponsorshipPhaseStart  DateTime? @map("sponsorship_phase_start")
   ownershipPhaseStart    DateTime? @map("ownership_phase_start")
+  sponsorshipAuctions    SponsorshipAuction[]
 
   @@map("artworks")
+}
+
+enum SponsorshipAuctionStatus {
+  open
+  closed
+  winner_selected
+}
+
+model SponsorshipAuction {
+  id        String                     @id @default(uuid())
+  artwork   GalleryArtwork             @relation(fields: [artworkId], references: [id], onDelete: Cascade)
+  artworkId Int                        @map("artwork_id")
+  user      User?                      @relation(fields: [userId], references: [id])
+  userId    String?                    @map("user_id")
+  bidAmount Float?                     @default(0) @map("bid_amount")
+  endsAt    DateTime                   @map("ends_at")
+  status    SponsorshipAuctionStatus   @default(open)
+
+  @@map("sponsorship_auctions")
+  @@index([artworkId])
+  @@index([endsAt])
 }

@@ -17,6 +17,24 @@ async function main() {
   for (const data of entries) {
     await prisma.galleryArtwork.create({ data: { ...data, userId: user.id } });
   }
+
+  const bidder = await prisma.user.upsert({
+    where: { email: 'bidder@example.com' },
+    update: {},
+    create: { email: 'bidder@example.com', passwordHash: 'hash' }
+  });
+
+  const artworks = await prisma.galleryArtwork.findMany({ take: 5 });
+  for (let i = 0; i < artworks.length; i++) {
+    await prisma.sponsorshipAuction.create({
+      data: {
+        artworkId: artworks[i].id,
+        userId: bidder.id,
+        bidAmount: (i + 1) * 10,
+        endsAt: new Date(Date.now() + (i + 1) * 3600000)
+      }
+    });
+  }
 }
 
 main().catch(e => { console.error(e); process.exit(1); }).finally(() => prisma.$disconnect());

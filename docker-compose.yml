@@ -34,3 +34,14 @@ services:
       - "3000:3000"
     depends_on:
       - api
+
+  worker:
+    image: node:18
+    working_dir: /usr/src/app
+    volumes:
+      - ./backend:/usr/src/app
+    command: sh -c "npm install --silent && node auctionWorker.js"
+    env_file:
+      - .env
+    depends_on:
+      - db

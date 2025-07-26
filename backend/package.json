@@ -8,7 +8,8 @@
     "db:setup": "./db-setup.sh",
     "test": "npm run db:setup && jest --runInBand",
     "postinstall": "npm run db:setup",
-    "seed": "node prisma/seed.js"
+    "seed": "node prisma/seed.js",
+    "worker": "node auctionWorker.js"
   },
   "keywords": [],
   "author": "",
