@@ -17,6 +17,7 @@ model User {
   name           String?
   role           String?
   artworks       Artwork[]
+  galleryArtworks GalleryArtwork[]
   bids           Bid[]
   sponsorships   Sponsorship[]
 }
@@ -74,4 +75,26 @@ model Sponsorship {
   createdAt      DateTime        @default(now())
 
   @@index([artworkId])
+}
+
+enum GalleryStatus {
+  pending
+  approved
+  rejected
+}
+
+model GalleryArtwork {
+  id                     Int      @id @default(autoincrement())
+  user                   User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  userId                 String
+  title                  String
+  description            String?
+  priceEstimate          Float?   @map("price_estimate")
+  imageUrl               String?  @map("image_url")
+  status                 GalleryStatus @default(pending)
+  createdAt              DateTime @default(now()) @map("created_at")
+  sponsorshipPhaseStart  DateTime? @map("sponsorship_phase_start")
+  ownershipPhaseStart    DateTime? @map("ownership_phase_start")
+
+  @@map("artworks")
 }

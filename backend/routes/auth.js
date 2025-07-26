@@ -13,7 +13,7 @@ router.post('/register', async (req, res) => {
   }
   try {
     const passwordHash = await bcrypt.hash(password, 10);
-    const user = await prisma.user.create({ data: { email, passwordHash } });
+    const user = await prisma.user.create({ data: { email, passwordHash, role: 'user' } });
     res.json({ id: user.id, email: user.email });
   } catch (err) {
     res.status(400).json({ error: 'Registration failed' });
@@ -30,7 +30,7 @@ router.post('/login', async (req, res) => {
   if (!valid) {
     return res.status(401).json({ error: 'Invalid credentials' });
   }
-  const token = jwt.sign({ id: user.id, email: user.email }, process.env.JWT_SECRET, { expiresIn: '7d' });
+  const token = jwt.sign({ id: user.id, email: user.email, role: user.role }, process.env.JWT_SECRET, { expiresIn: '7d' });
   res.cookie('token', token, { httpOnly: true });
   res.json({ id: user.id, email: user.email });
 });
